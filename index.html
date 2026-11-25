@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ลงชื่องาน · ชมรม OB Livestreaming</title>
+<meta name="description" content="ลงชื่อเข้าร่วมงานของชมรม OB Livestreaming มช.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f5f2; --card:#ffffff; --ink:#1d1b18; --muted:#6b665e; --line:#e4e0d8;
+  --accent:#7a1f2b; --accent-ink:#fff; --soft:#f3e7e8; --ok:#1f6b45; --ok-soft:#e3f1e8; --warn:#8a5a00; --warn-soft:#fbf0d9;
+  --radius:14px;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#141312; --card:#1d1c1a; --ink:#f1eee8; --muted:#a59f95; --line:#33302c;
+    --accent:#d8707e; --accent-ink:#1a0c0e; --soft:#3a2327; --ok:#7fcf9f; --ok-soft:#1f3328; --warn:#e6b85c; --warn-soft:#3a3020; }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "IBM Plex Sans Thai",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:640px;margin:0 auto;padding:20px 16px 64px}
+header{padding:8px 0 18px}
+.kicker{font-size:13px;letter-spacing:.08em;color:var(--accent);font-weight:600}
+h1{font-size:26px;line-height:1.25;margin:4px 0 6px}
+.sub{color:var(--muted);margin:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin:14px 0}
+.card h2{font-size:18px;margin:0 0 4px}
+.meta{color:var(--muted);font-size:14px;margin:0}
+label{display:block;font-size:14px;font-weight:500;margin:12px 0 4px}
+input{width:100%;font:inherit;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
+input:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:transparent}
+.hint{font-size:13px;color:var(--muted);margin-top:4px}
+.row{display:flex;gap:10px}
+.row>*{flex:1}
+button{font:inherit;font-weight:600;border:0;border-radius:10px;padding:11px 16px;cursor:pointer;background:var(--accent);color:var(--accent-ink)}
+button.ghost{background:transparent;color:var(--accent);border:1px solid var(--line)}
+button:disabled{opacity:.55;cursor:default}
+.btns{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.who{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.count{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 6px}
+.pill{font-size:13px;padding:3px 10px;border-radius:999px;background:var(--soft);color:var(--accent);font-weight:500}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.pill.full{background:var(--warn-soft);color:var(--warn)}
+ol.slots{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:6px}
+ol.slots li{display:flex;justify-content:space-between;gap:10px;padding:8px 10px;border-radius:10px;background:var(--bg);font-size:15px}
+ol.slots li .l{color:var(--muted);min-width:7.5em}
+ol.slots li.mine{outline:2px solid var(--accent)}
+ol.slots li .free{color:var(--ok);font-weight:500}
+details summary{cursor:pointer;color:var(--accent);font-size:14px;margin-top:8px}
+.msg{padding:10px 12px;border-radius:10px;font-size:14px;margin-top:12px}
+.msg.err{background:var(--warn-soft);color:var(--warn)}
+.msg.good{background:var(--ok-soft);color:var(--ok)}
+.hidden{display:none !important}
+.empty{color:var(--muted);text-align:center;padding:24px 8px}
+footer{color:var(--muted);font-size:13px;text-align:center;margin-top:28px}
+.confirm{margin-top:12px;padding:12px;border-radius:10px;background:var(--soft)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="kicker">ชมรม OB LIVESTREAMING · มช.</div>
+    <h1>ลงชื่อเข้าร่วมงาน</h1>
+    <p class="sub">ดูงานที่เปิดรับ ลงชื่อ หรือถอนชื่อได้ที่นี่ ระบบจะส่งคำเชิญ Google ปฏิทินและอีเมลเตือนก่อนงานให้เอง</p>
+  </header>
+
+  <!-- เข้าสู่ระบบ -->
+  <section class="card" id="loginCard">
+    <h2>เข้าสู่ระบบด้วยอีเมล</h2>
+    <p class="meta">ใช้อีเมลที่จะรับคำเชิญปฏิทิน (แนะนำ Gmail) ระบบจะส่งรหัส 6 หลักไปให้</p>
+    <div id="stepEmail">
+      <label for="email">อีเมล</label>
+      <input id="email" type="email" inputmode="email" autocomplete="email" placeholder="ชื่อ@gmail.com">
+      <div class="btns"><button id="sendCode">ส่งรหัส</button></div>
+    </div>
+    <div id="stepCode" class="hidden">
+      <label for="code">รหัส 6 หลักจากอีเมล</label>
+      <input id="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="123456">
+      <div class="hint">ไม่เจออีเมล ลองดูในโฟลเดอร์สแปมหรือโปรโมชัน</div>
+      <div class="btns"><button id="verify">เข้าสู่ระบบ</button><button class="ghost" id="back">เปลี่ยนอีเมล</button></div>
+    </div>
+    <div id="loginMsg"></div>
+  </section>
+
+  <!-- ข้อมูลของฉัน -->
+  <section class="card hidden" id="meCard">
+    <div class="who">
+      <div><h2>ข้อมูลของฉัน</h2><p class="meta" id="meEmail"></p></div>
+      <button class="ghost" id="logout">ออกจากระบบ</button>
+    </div>
+    <p class="meta" id="meNote"></p>
+    <label for="name">ชื่อ-นามสกุล</label>
+    <input id="name" autocomplete="name">
+    <div class="row">
+      <div><label for="nick">ชื่อเล่น</label><input id="nick"></div>
+      <div><label for="sid">รหัสนักศึกษา</label><input id="sid" inputmode="numeric" maxlength="9" placeholder="9 หลัก"></div>
+    </div>
+    <label for="phone">เบอร์โทรศัพท์</label>
+    <input id="phone" type="tel" inputmode="tel" maxlength="12" placeholder="0812345678">
+    <div class="hint" id="phoneHint">เบอร์และอีเมลเก็บไว้กับกรรมการเท่านั้น คนอื่นไม่เห็น</div>
+  </section>
+
+  <div id="flash"></div>
+  <div id="events"><div class="empty">กำลังโหลดรายการงาน…</div></div>
+
+  <footer>มีปัญหา ทักกรรมการในกลุ่มไลน์ของชมรมได้เลย</footer>
+</div>
+
+<script>
+const API = 'https://script.google.com/macros/s/AKfycbx5T6RZ_NZv-rUcWmmzHjqxu8H7f3xAdR4usjkWWioIsTXjgyynH5h8w7Epztk7kl7B/exec';
+
+const $ = id => document.getElementById(id);
+const store = {
+  get(k){ try { return localStorage.getItem(k) || ''; } catch(e){ return ''; } },
+  set(k,v){ try { localStorage.setItem(k,v); } catch(e){} },
+  del(k){ try { localStorage.removeItem(k); } catch(e){} },
+};
+let token = store.get('ob_token');
+let profile = null;
+let events = [];
+let pending = null;   // งานที่รอยืนยันถอนชื่อ
+
+async function call(body){
+  const r = await fetch(API, { method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(body) });
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  return r.json();
+}
+function el(tag, cls, text){ const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+function msg(target, text, kind){ const box = $(target); box.innerHTML = ''; if (!text) return; box.appendChild(el('div', 'msg ' + (kind || 'err'), text)); }
+
+// ---------- เข้าสู่ระบบ ----------
+$('sendCode').onclick = async () => {
+  const email = $('email').value.trim().toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return msg('loginMsg', 'อีเมลไม่ถูกต้อง');
+  $('sendCode').disabled = true; msg('loginMsg', 'กำลังส่งรหัส…', 'good');
+  try {
+    const r = await call({ action:'requestCode', email });
+    if (!r.ok) { msg('loginMsg', r.error); return; }
+    $('stepEmail').classList.add('hidden'); $('stepCode').classList.remove('hidden');
+    msg('loginMsg', 'ส่งรหัสไปที่ ' + email + ' แล้ว', 'good'); $('code').focus();
+  } catch(e){ msg('loginMsg', 'เชื่อมต่อไม่ได้ ลองใหม่อีกครั้ง'); }
+  finally { $('sendCode').disabled = false; }
+};
+$('back').onclick = () => { $('stepCode').classList.add('hidden'); $('stepEmail').classList.remove('hidden'); msg('loginMsg',''); };
+$('verify').onclick = async () => {
+  const email = $('email').value.trim().toLowerCase(), code = $('code').value.trim();
+  if (!/^\d{6}$/.test(code)) return msg('loginMsg', 'ใส่รหัส 6 หลัก');
+  $('verify').disabled = true;
+  try {
+    const r = await call({ action:'verify', email, code });
+    if (!r.ok) { msg('loginMsg', r.error); return; }
+    token = r.token; store.set('ob_token', token);
+    msg('loginMsg', ''); $('code').value = '';
+    await loadMe(); await loadEvents();
+  } catch(e){ msg('loginMsg', 'เชื่อมต่อไม่ได้ ลองใหม่อีกครั้ง'); }
+  finally { $('verify').disabled = false; }
+};
+$('logout').onclick = () => { token = ''; store.del('ob_token'); profile = null; showLogin(); loadEvents(); };
+
+function showLogin(){
+  $('loginCard').classList.remove('hidden'); $('meCard').classList.add('hidden');
+  $('stepCode').classList.add('hidden'); $('stepEmail').classList.remove('hidden');
+}
+async function loadMe(){
+  if (!token) return showLogin();
+  try {
+    const r = await call({ action:'me', token });
+    if (!r.ok) { token=''; store.del('ob_token'); return showLogin(); }
+    profile = r.profile;
+    $('loginCard').classList.add('hidden'); $('meCard').classList.remove('hidden');
+    $('meEmail').textContent = r.email;
+    if (profile) {
+      $('name').value = profile.name || ''; $('nick').value = profile.nick || ''; $('sid').value = profile.sid || '';
+      $('phone').value = '';
+      $('phone').placeholder = profile.hasPhone ? 'ใช้เบอร์เดิม (' + profile.phoneHint + ') ถ้าเปลี่ยนพิมพ์ใหม่' : '0812345678';
+      $('meNote').textContent = 'ระบบจำข้อมูลของคุณไว้แล้ว แก้ได้ถ้าข้อมูลเปลี่ยน';
+    } else {
+      $('meNote').textContent = 'ลงชื่อครั้งแรก กรอกข้อมูลให้ครบครั้งเดียว ครั้งหน้าระบบจำให้';
+    }
+  } catch(e){ showLogin(); }
+}
+
+// ---------- รายการงาน ----------
+async function loadEvents(){
+  try {
+    const r = await call({ action:'events', token });
+    if (!r.ok) throw new Error(r.error);
+    events = r.events; render();
+  } catch(e){ $('events').innerHTML = ''; $('events').appendChild(el('div','empty','โหลดรายการงานไม่ได้ ลองรีเฟรชหน้านี้')); }
+}
+
+function render(){
+  const box = $('events'); box.innerHTML = '';
+  if (!events.length) { box.appendChild(el('div','empty','ตอนนี้ยังไม่มีงานที่เปิดรับลงชื่อ')); return; }
+  events.forEach(ev => {
+    const c = el('section','card');
+    c.appendChild(el('h2', null, ev.title));
+    if (ev.when) c.appendChild(el('p','meta', ev.when));
+    if (ev.location && !String(ev.when).includes(ev.location)) c.appendChild(el('p','meta', '📍 ' + ev.location));
+    const cnt = el('div','count');
+    const free = ev.mainCap - ev.mainTaken;
+    cnt.appendChild(el('span', 'pill ' + (free > 0 ? 'ok' : 'full'), 'ตัวจริง ' + ev.mainTaken + '/' + ev.mainCap));
+    if (ev.resCap) cnt.appendChild(el('span','pill', 'สำรอง ' + ev.resTaken + '/' + ev.resCap));
+    if (ev.mine) cnt.appendChild(el('span','pill ok', '✓ คุณลงชื่อแล้ว'));
+    c.appendChild(cnt);
+
+    const det = document.createElement('details');
+    det.appendChild(el('summary', null, 'ดูรายชื่อ'));
+    const ol = el('ol','slots');
+    ev.slots.forEach(s => {
+      const li = el('li', s.mine ? 'mine' : '');
+      li.appendChild(el('span','l', s.label));
+      li.appendChild(s.taken ? el('span', null, s.who + (s.mine ? ' (คุณ)' : '')) : el('span', 'free', s.committee ? 'ว่าง (กรรมการ)' : 'ว่าง'));
+      ol.appendChild(li);
+    });
+    det.appendChild(ol); c.appendChild(det);
+
+    const btns = el('div','btns');
+    if (ev.mine) {
+      const b = el('button','ghost','ถอนชื่อ'); b.onclick = () => askWithdraw(ev, c); btns.appendChild(b);
+    } else if (ev.open) {
+      const b = el('button', null, token ? 'ลงชื่องานนี้' : 'เข้าสู่ระบบเพื่อลงชื่อ');
+      b.onclick = () => token ? signup(ev, b) : (window.scrollTo({top:0,behavior:'smooth'}), $('email').focus());
+      btns.appendChild(b);
+    } else {
+      btns.appendChild(el('span','meta','งานนี้เต็มแล้ว'));
+    }
+    c.appendChild(btns);
+    c.appendChild(el('div', null)).id = 'm_' + ev.id;
+    box.appendChild(c);
+  });
+}
+
+function askWithdraw(ev, card){
+  const id = 'm_' + ev.id; const box = $(id); box.innerHTML = '';
+  const w = el('div','confirm');
+  w.appendChild(el('div', null, 'ยืนยันถอนชื่อจากงาน "' + ev.title + '"? ถ้ามีคนสำรอง ระบบจะเลื่อนขึ้นมาแทนทันที'));
+  const bb = el('div','btns');
+  const yes = el('button', null, 'ยืนยันถอนชื่อ'); const no = el('button','ghost','ยกเลิก');
+  no.onclick = () => box.innerHTML = '';
+  yes.onclick = async () => {
+    yes.disabled = no.disabled = true;
+    try {
+      const r = await call({ action:'withdraw', token, eventId: ev.id });
+      if (r.login) { token=''; store.del('ob_token'); showLogin(); }
+      if (!r.ok) { msg(id, r.error); return; }
+      events = r.events; render(); msg('m_' + ev.id, 'ถอนชื่อเรียบร้อยแล้ว', 'good');
+    } catch(e){ msg(id, 'เชื่อมต่อไม่ได้ ลองใหม่อีกครั้ง'); yes.disabled = no.disabled = false; }
+  };
+  bb.append(yes, no); w.appendChild(bb); box.appendChild(w);
+}
+
+async function signup(ev, btn){
+  const id = 'm_' + ev.id;
+  const body = { action:'signup', token, eventId: ev.id,
+    name: $('name').value.trim(), nick: $('nick').value.trim(), sid: $('sid').value.trim(), phone: $('phone').value.trim() };
+  if (!body.name || !body.nick) { msg(id, 'กรอกชื่อและชื่อเล่นในกล่อง "ข้อมูลของฉัน" ก่อน'); $('meCard').scrollIntoView({behavior:'smooth'}); return; }
+  if (!/^\d{9}$/.test(body.sid)) { msg(id, 'กรอกรหัสนักศึกษา 9 หลักในกล่อง "ข้อมูลของฉัน" ก่อน'); $('sid').focus(); return; }
+  if (!body.phone && !(profile && profile.hasPhone)) { msg(id, 'กรอกเบอร์โทรในกล่อง "ข้อมูลของฉัน" ก่อน'); $('phone').focus(); return; }
+  btn.disabled = true; msg(id, 'กำลังลงชื่อ…', 'good');
+  try {
+    const r = await call(body);
+    if (r.login) { token=''; store.del('ob_token'); showLogin(); }
+    if (!r.ok) { msg(id, r.error); btn.disabled = false; return; }
+    events = r.events; render();
+    msg('m_' + ev.id, 'ลงชื่อสำเร็จ (' + r.label + ') ตรวจอีเมลยืนยันพร้อมลิงก์กลุ่มไลน์ได้เลย', 'good');
+    loadMe();
+  } catch(e){ msg(id, 'เชื่อมต่อไม่ได้ ลองใหม่อีกครั้ง'); btn.disabled = false; }
+}
+
+loadMe(); loadEvents();
+</script>
+</body>
+</html>
